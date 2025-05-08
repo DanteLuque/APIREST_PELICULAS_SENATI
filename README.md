@@ -1,5 +1,6 @@
 ### Variables de entorno requeridas
 
+```
 # SERVER
 PORT=
 
@@ -8,3 +9,4 @@ HOST=
 USER=
 PASSWORD=
 DB=
+```
