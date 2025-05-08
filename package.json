@@ -2,7 +2,7 @@
   "name": "apirest-cine",
   "version": "1.0.0",
   "type": "module",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "node .",
     "dev": "nodemon .",
