@@ -32,13 +32,20 @@ export const getById = async (req, res) => {
 };
 
 export const create = async (req, res) => {
-  const { titulo, duracionMin, clasificacion, lazamiento } = req.body;
-  const [result] = await conexion.query(
-    `INSERT INTO PELICULAS (TITULO, DURACION_MIN, CLASIFICACION, LANZAMIENTO, created_at, updated_at) VALUES (?,?,?,?,?,?)`,
-    [titulo, duracionMin, clasificacion, lazamiento, new Date(), new Date()]
-  );
-
-  res.json(result);
+  try {
+    const { titulo, duracionMin, clasificacion, lazamiento } = req.body;
+    const pelicula = new Movie(null, titulo, duracionMin, clasificacion, lazamiento);
+    const result = await pelicula.create(conexion);
+    res.status(201).json({
+      message: "Película creada correctamente",
+      insertId: result.insertId
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al crear la película",
+      message: error.message
+    });
+  }
 };
 
 export const updateById = async (req, res) => {

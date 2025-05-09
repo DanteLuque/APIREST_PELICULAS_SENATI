@@ -20,8 +20,8 @@ class Movie {
   }
 
   static async getAll(conexion) {
-      const [result] = await conexion.query("SELECT * FROM PELICULAS WHERE deleted_at IS NULL");
-      return result;
+    const [result] = await conexion.query("SELECT * FROM PELICULAS WHERE deleted_at IS NULL");
+    return result;
   }
 
   static async getById(conexion, id) {
@@ -31,6 +31,21 @@ class Movie {
     );
     return result;
   }
+
+  async create(conexion) {
+    const now = new Date();
+    this.created_at = now;
+    this.updated_at = now;
+
+    const [result] = await conexion.query(
+      `INSERT INTO PELICULAS (TITULO, DURACION_MIN, CLASIFICACION, LANZAMIENTO, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [this.titulo, this.duracionMin, this.clasificacion, this.lazamiento, this.created_at, this.updated_at]
+    );
+    this.id = result.insertId;
+    return result;
+  }
+  
 }
 
 export default Movie;
