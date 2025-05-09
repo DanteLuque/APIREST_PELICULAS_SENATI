@@ -20,12 +20,8 @@ class Movie {
   }
 
   static async getAll(conexion) {
-    try {
       const [result] = await conexion.query("SELECT * FROM PELICULAS WHERE deleted_at IS NULL");
       return result;
-    } catch (error) {
-      throw error;
-    }
   }
 }
 
