@@ -76,16 +76,19 @@ export const updateById = async (req, res) => {
 };
 
 export const deleteById = async (req, res) => {
-  const id = req.params.id;
-  const [result] = await conexion.query(
-    "UPDATE PELICULAS SET deleted_at = ? WHERE ID = ? AND deleted_at IS NULL",
-    [new Date(), id]
-  );
+  try {
+    const id = req.params.id;
+    const result = await Movie.softDelete(conexion, id);
 
-  if (result.affectedRows <= 0) {
-    return res.status(404).json({
-      message: "not found",
+    if (result.affectedRows <= 0) return res.status(404).json({
+        message: "not found",
+      });
+      
+    res.sendStatus(204); 
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al eliminar la película",
+      message: error.message,
     });
   }
-  res.sendStatus(204);
 };

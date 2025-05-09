@@ -64,6 +64,22 @@ class Movie {
     return result;
   }
 
+  static async softDelete(conexion, id) {
+    const [result] = await conexion.query(
+      `UPDATE PELICULAS SET deleted_at = ? WHERE ID = ? AND deleted_at IS NULL`,
+      [new Date(), id]
+    );
+    return result;
+  }
+
+  static async hardDelete(conexion, id) {
+    const [result] = await conexion.query(
+      `DELETE FROM PELICULAS WHERE ID = ? AND deleted_at IS NULL`,
+      [id]
+    );
+    return result;
+  }
+
 }
 
 export default Movie;
