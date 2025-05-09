@@ -19,8 +19,8 @@ export const getById = async (req, res) => {
     const result = await Movie.getById(conexion, id);
 
     if (result.length <= 0) return res.status(404).json({
-        message: "Not found",
-      });
+      message: "Not found",
+    });
 
     res.json(result);
   } catch (error) {
@@ -49,25 +49,30 @@ export const create = async (req, res) => {
 };
 
 export const updateById = async (req, res) => {
-  const id = req.params.id;
-  const { titulo, duracionMin, clasificacion, lazamiento } = req.body;
-  const querySQL = `UPDATE PELICULAS SET TITULO=?,DURACION_MIN=?,CLASIFICACION=?, LANZAMIENTO=?, updated_at = ? WHERE ID=? AND deleted_at IS NULL`;
-  const [result] = await conexion.query(querySQL, [
-    titulo,
-    duracionMin,
-    clasificacion,
-    lazamiento,
-    new Date(),
-    id,
-  ]);
+  try {
+    const id = req.params.id;
+    const { titulo, duracionMin, clasificacion, lazamiento } = req.body;
 
-  if (result.affectedRows <= 0) {
-    return res.status(404).json({
-      message: "not found",
+    const pelicula = new Movie(
+      id,
+      titulo,
+      duracionMin,
+      clasificacion,
+      lazamiento
+    );
+
+    const result = await pelicula.update(conexion);
+    if (result.affectedRows <= 0) return res.status(404).json({
+        message: "not found",
+      });
+    
+    res.json({ message: "update success" });
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al actualizar la película",
+      message: error.message,
     });
   }
-
-  res.json({ message: "update success" });
 };
 
 export const deleteById = async (req, res) => {

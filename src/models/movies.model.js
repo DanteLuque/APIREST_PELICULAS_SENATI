@@ -45,7 +45,25 @@ class Movie {
     this.id = result.insertId;
     return result;
   }
-  
+
+  async update(conexion) {
+    this.updated_at = new Date();
+    const [result] = await conexion.query(
+      `UPDATE PELICULAS 
+       SET TITULO = ?, DURACION_MIN = ?, CLASIFICACION = ?, LANZAMIENTO = ?, updated_at = ? 
+       WHERE ID = ? AND deleted_at IS NULL`,
+      [
+        this.titulo,
+        this.duracionMin,
+        this.clasificacion,
+        this.lazamiento,
+        this.updated_at,
+        this.id
+      ]
+    );
+    return result;
+  }
+
 }
 
 export default Movie;
