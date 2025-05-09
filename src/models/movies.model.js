@@ -23,6 +23,14 @@ class Movie {
       const [result] = await conexion.query("SELECT * FROM PELICULAS WHERE deleted_at IS NULL");
       return result;
   }
+
+  static async getById(conexion, id) {
+    const [result] = await conexion.query(
+      "SELECT * FROM PELICULAS WHERE ID = ? AND deleted_at IS NULL",
+      [id]
+    );
+    return result;
+  }
 }
 
 export default Movie;
