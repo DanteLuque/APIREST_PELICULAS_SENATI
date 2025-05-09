@@ -33,8 +33,8 @@ export const getById = async (req, res) => {
 
 export const create = async (req, res) => {
   try {
-    const { titulo, duracionMin, clasificacion, lazamiento } = req.body;
-    const pelicula = new Movie(null, titulo, duracionMin, clasificacion, lazamiento);
+    const { titulo, duracionMin, clasificacion, lanzamiento } = req.body;
+    const pelicula = new Movie(null, titulo, duracionMin, clasificacion, lanzamiento);
     const result = await pelicula.create(conexion);
     res.status(201).json({
       message: "Película creada correctamente",
@@ -51,21 +51,21 @@ export const create = async (req, res) => {
 export const updateById = async (req, res) => {
   try {
     const id = req.params.id;
-    const { titulo, duracionMin, clasificacion, lazamiento } = req.body;
-
-    const pelicula = new Movie(
-      id,
-      titulo,
-      duracionMin,
-      clasificacion,
-      lazamiento
-    );
-
-    const result = await pelicula.update(conexion);
-    if (result.affectedRows <= 0) return res.status(404).json({
-        message: "not found",
-      });
+    const rows = await Movie.getById(conexion, id);
+    if (rows.length === 0) return res.status(404).json({ message: "not found" });
+    const current = rows[0];
     
+    const {
+      titulo = current.TITULO,
+      duracionMin = current.DURACION_MIN,
+      clasificacion = current.CLASIFICACION,
+      lanzamiento = current.LANZAMIENTO,
+    } = req.body;
+
+    const pelicula = new Movie(id, titulo, duracionMin, clasificacion, lanzamiento);
+    const result = await pelicula.update(conexion);
+
+    if (result.affectedRows <= 0) return res.sendStatus(204); 
     res.json({ message: "update success" });
   } catch (error) {
     res.status(500).json({
@@ -83,7 +83,7 @@ export const deleteById = async (req, res) => {
     if (result.affectedRows <= 0) return res.status(404).json({
         message: "not found",
       });
-      
+
     res.sendStatus(204); 
   } catch (error) {
     res.status(500).json({
